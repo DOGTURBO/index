@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GelaMark - Revenda de Geladeiras</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #333;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #004d80 0%, #002b4d 100%);
+            position: fixed;
+            left: -280px;
+            top: 0;
+            padding: 25px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.2);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .sidebar-close:hover {
+            color: #25D366;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h2 {
+            color: #fff;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+        }
+
+        .sidebar-nav {
+            margin-top: 30px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            color: rgba(255,255,255,0.9);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar-nav i {
+            margin-right: 12px;
+            font-size: 1.2em;
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25D366;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 8px 25px rgba(37,211,102,0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 12px 30px rgba(37,211,102,0.4);
+        }
+
+        .main-content {
+            padding: 20px;
+            transition: 0.4s;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .menu-toggle {
+            font-size: 24px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .hero-banner {
+            background: transparent;
+            height: auto;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .logo-gif {
+            max-width: 400px;
+            width: 90%;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .products-grid {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 30px;
+            padding: 20px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #004d80 #f5f7fa;
+        }
+
+        .products-grid::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .products-grid::-webkit-scrollbar-track {
+            background: #f5f7fa;
+        }
+
+        .products-grid::-webkit-scrollbar-thumb {
+            background: #004d80;
+            border-radius: 4px;
+        }
+
+        .product-card {
+            flex: 0 0 auto;
+            width: 300px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
+
+        .product-image {
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-info h3 {
+            color: #004d80;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .product-info p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .product-price {
+            color: #25D366;
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 800px;
+            width: 90%;
+            z-index: 2001;
+            display: none;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .carousel-slide {
+            display: none;
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .carousel-slide.active {
+            display: block;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            z-index: 10;
+        }
+
+        .carousel-nav.prev {
+            left: 10px;
+        }
+
+        .carousel-nav.next {
+            right: 10px;
+        }
+
+        .carousel-dots {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #ddd;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: #004d80;
+        }
+
+        .image-expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+
+        .image-expanded img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            .carousel-slide {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <span class="sidebar-close" onclick="toggleSidebar()">&times;</span>
+        <div class="sidebar-header">
+            <h2>GelaMark</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-home"></i>Início</a>
+            <a href="#"><i class="fas fa-box-open"></i>Produtos</a>
+            <a href="#"><i class="fas fa-info-circle"></i>Sobre Nós</a>
+            <a href="#"><i class="fas fa-envelope"></i>Contato</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <section class="hero-banner">
+            <img src="https://s6.gifyu.com/images/bzNT5.gif" 
+                 alt="Logo GelaMark Animado" 
+                 class="logo-gif">
+        </section>
+
+        <div class="products-grid">
+            <div class="product-card" onclick="openModal('geladeira1')">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5" alt="Geladeira Brastemp">
+                </div>
+                <div class="product-info">
+                    <h3>Geladeira Brastemp</h3>
+                    <p>Frost Free 375L • Inox • 127V</p>
+                    <div class="product-price">R$ 3.299,00</div>
+                </div>
+            </div>
+
+            <div class="product-card" onclick="openModal('geladeira2')">
+                <div class="product-image">
+                    <img src="https://i.imgur.com/zDVTwDn.jpeg" alt="Geladeira Consul">
+                </div>
+                <div class="product-info">
+                    <h3>Geladeira Consul</h3>
+                    <p>Duplex 420L • Branco • 220V</p>
+                    <div class="product-price">R$ 2.899,00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="https://wa.me/5511999999999" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+    <div class="modal" id="productModal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div class="carousel-container" id="modalContent"></div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function createCarousel(images) {
+            return `
+                ${images.map((img, index) => `
+                    <img src="${img}" class="carousel-slide ${index === 0 ? 'active' : ''}" 
+                         alt="Geladeira" onclick="expandImage('${img}')">
+                `).join('')}
+                <button class="carousel-nav prev" onclick="changeSlide(-1)">❮</button>
+                <button class="carousel-nav next" onclick="changeSlide(1)">❯</button>
+                <div class="carousel-dots">
+                    ${images.map((_, index) => `
+                        <span class="dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></span>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function changeSlide(n) {
+            showSlide(currentSlide + n);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.dot');
+            if (n >= slides.length) n = 0;
+            if (n < 0) n = slides.length - 1;
+            currentSlide = n;
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            slides[n].classList.add('active');
+            dots[n].classList.add('active');
+        }
+
+        function openModal(productId) {
+            const products = {
+                'geladeira1': {
+                    name: 'Brastemp Frost Free',
+                    price: 'R$ 3.299,00',
+                    images: [
+                        'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5',
+                        'https://i.imgur.com/zDVTwDn.jpeg',
+                        'https://images.unsplash.com/photo-1584305084843-c8f02d3b53e3'
+                    ],
+                    description: 'Geladeira com tecnologia Frost Free, 375 litros, painel eletrônico'
+                },
+                'geladeira2': {
+                    name: 'Consul Duplex',
+                    price: 'R$ 2.899,00',
+                    images: [
+                        'https://i.imgur.com/zDVTwDn.jpeg',
+                        'https://images.unsplash.com/photo-1584556812954-6e87e7a1b6bd',
+                        'https://images.unsplash.com/photo-1584305084843-c8f02d3b53e3'
+                    ],
+                    description: 'Geladeira Duplex 420 litros com controle digital'
+                }
+            };
+
+            const product = products[productId];
+            const modalContent = `
+                <h2 style="margin-bottom: 15px; color: #004d80;">${product.name}</h2>
+                <p style="margin-bottom: 20px;">${product.description}</p>
+                ${createCarousel(product.images)}
+                <div class="product-price" style="margin: 20px 0;">${product.price}</div>
+                <a href="https://wa.me/5511999999999" 
+                   style="display: block; text-align: center; background: #25D366; 
+                          color: white; padding: 12px 24px; border-radius: 8px; 
+                          text-decoration: none; font-weight: 600;"
+                   target="_blank">
+                    <i class="fab fa-whatsapp"></i> Comprar via WhatsApp
+                </a>
+            `;
+
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('productModal').style.display = 'block';
+            showSlide(0); // Reset carrossel ao abrir
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        function expandImage(src) {
+            const overlay = document.createElement('div');
+            overlay.className = 'image-expanded';
+            overlay.onclick = () => document.body.removeChild(overlay);
+
+            const img = document.createElement('img');
+            img.src = src;
+            img.onclick = (e) => e.stopPropagation();
+
+            overlay.appendChild(img);
+            document.body.appendChild(overlay);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
