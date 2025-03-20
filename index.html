@@ -65,6 +65,7 @@
             letter-spacing: 2px;
         }
 
+        /* Atualize a sidebar NAV desta forma */
         .sidebar-nav {
             margin-top: 30px;
         }
@@ -350,19 +351,86 @@
                 height: 300px;
             }
         }
+
+        /* Estilos adicionados */
+        .address-section {
+            background: #fff;
+            margin: 40px 20px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .address-content h2 {
+            color: #004d80;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .address-content p {
+            color: #666;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .business-info {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+        }
+
+        .business-info i {
+            color: #25D366;
+            margin-right: 10px;
+        }
+
+        .main-footer {
+            background: #002b4d;
+            color: #fff;
+            text-align: center;
+            padding: 25px;
+            margin-top: 50px;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .contact-form button {
+            background: #25D366;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
     <div class="sidebar" id="sidebar">
         <span class="sidebar-close" onclick="toggleSidebar()">&times;</span>
         <div class="sidebar-header">
-            <h2></h2>
-        </div>
+            
+       </div>
+        <!-- Sidebar NAV atualizada -->
         <nav class="sidebar-nav">
-            <a href="#"><i class="fas fa-home"></i>Início</a>
-            <a href="#"><i class="fas fa-box-open"></i>Produtos</a>
-            <a href="#"><i class="fas fa-info-circle"></i>Sobre Nós</a>
-            <a href="#"><i class="fas fa-envelope"></i>Contato</a>
+            <a href="#" onclick="closeModal()"><i class="fas fa-home"></i>Início</a>
+            <a href="#products" onclick="closeModal()"><i class="fas fa-box-open"></i>Produtos</a>
+            <a href="javascript:void(0)" onclick="openInfoModal('about')"><i class="fas fa-info-circle"></i>Sobre Nós</a>
+            <a href="javascript:void(0)" onclick="openInfoModal('contact')"><i class="fas fa-envelope"></i>Contato</a>
         </nav>
     </div>
 
@@ -401,6 +469,24 @@
             </div>
         </div>
     </div>
+    <!-- Endereço e Informações da loja adicionadas ANTES do botão do WhatsApp -->
+    <section class="address-section">
+        <div class="address-content">
+            <h2><i class="fas fa-map-marker-alt"></i> Nossa Loja</h2>
+            <p>Rua do Ablau Chambrolino, 444<br>
+            Centro - Paranavaí/PR<br>
+            CEP: 87701-010</p>
+            <div class="business-info">
+                <p><i class="fas fa-phone"></i> (44) 3423-4567</p>
+                <p><i class="fas fa-clock"></i> Seg-Sex: 09h às 18h | Sáb: 09h às 12h</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <p><h7>GelaMark © 2025<br><i>Todos os direitos reservados</i></p></br></h7>
+      
+    </footer>
 
     <a href="https://wa.me/5511999999999" class="whatsapp-float" target="_blank">
         <i class="fab fa-whatsapp"></i>
@@ -412,6 +498,28 @@
         <div class="carousel-container" id="modalContent"></div>
     </div>
 
+    <!-- Novos Modais adicionados antes do fechamento da tag </body> -->
+    <div class="modal-overlay" id="infoOverlay" onclick="closeInfoModal()"></div>
+
+    <div class="modal" id="aboutModal">
+        <span class="modal-close" onclick="closeInfoModal()">&times;</span>
+        <h1>Quem Somos</h1><br>
+        <p>Somos a maior revendedora de geladeiras da região noroeste do Paraná, com mais de 15 anos de experiência no mercado.</p></br>
+        <img src="https://i.imgur.com/abc123.jpg" alt="Nossa equipe" style="width:100%;margin-top:20px;">
+    </div>
+
+    <div class="modal" id="contactModal">
+        <span class="modal-close" onclick="closeInfoModal()">&times;</span>
+        <h2>Entre em Contato</h2>
+        <form class="contact-form">
+            <input type="text" placeholder="Seu nome" required>
+            <input type="email" placeholder="Seu e-mail" required>
+            <textarea placeholder="Sua mensagem" rows="4" required></textarea>
+            <button type="submit">Enviar Mensagem</button>
+        </form>
+    </div>
+
+    <!-- Funções JavaScript dos modais -->
     <script>
         let currentSlide = 0;
 
@@ -497,7 +605,7 @@
             document.getElementById('modalContent').innerHTML = modalContent;
             document.getElementById('modalOverlay').style.display = 'block';
             document.getElementById('productModal').style.display = 'block';
-            showSlide(0); // Reset carrossel ao abrir
+            showSlide(0); // Reset do carrossel ao abrir
         }
 
         function closeModal() {
@@ -518,8 +626,25 @@
             document.body.appendChild(overlay);
         }
 
+        // Funções para os novos modais
+        function openInfoModal(type) {
+            document.getElementById('infoOverlay').style.display = 'block';
+            document.getElementById(type + 'Modal').style.display = 'block';
+        }
+
+        function closeInfoModal() {
+            document.getElementById('infoOverlay').style.display = 'none';
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        // Fechar modal com ESC (para ambos os modais)
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Escape') {
+                closeModal();
+                closeInfoModal();
+            }
         });
     </script>
 </body>
